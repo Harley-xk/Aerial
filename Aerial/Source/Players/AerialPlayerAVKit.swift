@@ -29,7 +29,7 @@ private class LayerHolder {
     func newLayer() -> CALayer {
         let layer = AVPlayerLayer(player: self.player)
         if #available(OSX 10.10, *) {
-            layer.videoGravity = AVLayerVideoGravityResizeAspectFill
+            layer.videoGravity = .resizeAspectFill
         }
         
         layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]

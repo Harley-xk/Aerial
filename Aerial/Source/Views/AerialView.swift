@@ -61,16 +61,16 @@ class AerialView: ScreenSaverView {
     
     // MARK: - Preferences
     
-    override func hasConfigureSheet() -> Bool {
+    func hasConfigureSheet() -> Bool {
         return true
     }
     
-    override func configureSheet() -> NSWindow? {
+    func configureSheet() -> NSWindow? {
         if let controller = preferencesController {
             return controller.window
         }
         
-        let controller = PreferencesWindowController(windowNibName: "PreferencesWindow")
+        let controller = PreferencesWindowController(windowNibName: NSNib.Name(rawValue: "PreferencesWindow"))
     
         preferencesController = controller
         return controller.window

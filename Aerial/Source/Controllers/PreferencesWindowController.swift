@@ -57,15 +57,15 @@ NSOutlineViewDelegate, VideoDownloadDelegate {
         playerView.player = player
         playerView.controlsStyle = .none
         if #available(OSX 10.10, *) {
-            playerView.videoGravity = AVLayerVideoGravityResizeAspectFill
+            playerView.videoGravity = AVLayerVideoGravity.resizeAspectFill.rawValue
         }
         
         if preferences.differentAerialsOnEachDisplay {
-            differentAerialCheckbox.state = NSOnState
+            differentAerialCheckbox.state = .on
         }
         
         if !preferences.cacheAerials {
-            cacheAerialsAsTheyPlayCheckbox.state = NSOffState
+            cacheAerialsAsTheyPlayCheckbox.state = .off
         }
         
         colorizeProjectPageLink()
@@ -84,7 +84,7 @@ NSOutlineViewDelegate, VideoDownloadDelegate {
         let link = projectPageLink.attributedTitle
         let coloredLink = NSMutableAttributedString(attributedString: link)
         let fullRange = NSRange(location: 0, length: coloredLink.length)
-        coloredLink.addAttribute(NSForegroundColorAttributeName,
+        coloredLink.addAttribute(.foregroundColor,
                                  value: color,
                                   range: fullRange)
         projectPageLink.attributedTitle = coloredLink
@@ -95,7 +95,7 @@ NSOutlineViewDelegate, VideoDownloadDelegate {
     @IBAction func cacheAerialsAsTheyPlayClick(_ button: NSButton!) {
         debugLog("cache aerials as they play: \(button.state)")
         
-        let onState = (button.state == NSOnState)
+        let onState = (button.state == .on)
         preferences.cacheAerials = onState
     }
     
@@ -111,7 +111,7 @@ NSOutlineViewDelegate, VideoDownloadDelegate {
         openPanel.directoryURL = cacheLocation.url
         
         openPanel.begin { result in
-            guard result == NSFileHandlingPanelOKButton,
+            guard result.rawValue == NSFileHandlingPanelOKButton,
                 openPanel.urls.count > 0 else {
                 return
             }
@@ -144,11 +144,11 @@ NSOutlineViewDelegate, VideoDownloadDelegate {
         NSMenu.popUpContextMenu(menu, with: event!, for: button)
     }
     
-    func outlineViewUncheckAll(button: NSButton) {
+    @objc func outlineViewUncheckAll(button: NSButton) {
         setAllVideos(inRotation: false)
     }
     
-    func outlineViewCheckAll(button: NSButton) {
+    @objc func outlineViewCheckAll(button: NSButton) {
         setAllVideos(inRotation: true)
     }
     
@@ -169,7 +169,7 @@ NSOutlineViewDelegate, VideoDownloadDelegate {
     
     @IBAction func differentAerialsOnEachDisplayCheckClick(_ button: NSButton?) {
         let state = differentAerialCheckbox.state
-        let onState = (state == NSOnState)
+        let onState = (state == .on)
         
         preferences.differentAerialsOnEachDisplay = onState
         
@@ -179,7 +179,7 @@ NSOutlineViewDelegate, VideoDownloadDelegate {
     // MARK: - Link
     
     @IBAction func pageProjectClick(_ button: NSButton?) {
-        let workspace = NSWorkspace.shared()
+        let workspace = NSWorkspace.shared
         let url = URL(string: "http://github.com/JohnCoates/Aerial")!
         workspace.open(url)
     }
@@ -338,14 +338,14 @@ NSOutlineViewDelegate, VideoDownloadDelegate {
         switch item {
         case is City:
             let city = item as! City
-            let view = outlineView.make(withIdentifier: "HeaderCell",
+            let view = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "HeaderCell"),
                                         owner: self) as! NSTableCellView
             view.textField?.stringValue = city.name
             
             return view
         case is TimeOfDay:
             let timeOfDay = item as! TimeOfDay
-            let view = outlineView.make(withIdentifier: "DataCell",
+            let view = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "DataCell"),
                                         owner: self) as! NSTableCellView
             
             view.textField?.stringValue = timeOfDay.title.capitalized
@@ -362,7 +362,7 @@ NSOutlineViewDelegate, VideoDownloadDelegate {
             return view
         case is AerialVideo:
             let video = item as! AerialVideo
-            let view = outlineView.make(withIdentifier: "CheckCell",
+            let view = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "CheckCell"),
                                         owner: self) as! CheckCellView
             
             // One based index
@@ -382,9 +382,9 @@ NSOutlineViewDelegate, VideoDownloadDelegate {
             let isInRotation = preferences.videoIsInRotation(videoID: video.id)
             
             if isInRotation {
-                view.checkButton.state = NSOnState
+                view.checkButton.state = .on
             } else {
-                view.checkButton.state = NSOffState
+                view.checkButton.state = .off
             }
             
             view.onCheck = { checked in
